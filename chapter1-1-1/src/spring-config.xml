@@ -4,7 +4,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!--引入外部属性文件-->
-    <context:property-placeholder location="classpath:jdbc.properties"/>
+    <!--<context:property-placeholder location="classpath:jdbc.properties"/>-->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:/jdbc.properties" />
+    </bean>
 
     <!--配置c3p0连接池-->
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
@@ -25,13 +28,35 @@
                 <prop key="hibernate.show_sql">true</prop>
                 <prop key="hibernate.format_sql">true</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.connection.url">jdbc:mysql://localhost:3306/framework-learning</prop>
+                <prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>
             </props>
         </property>
         <!--加载hibernate映射文件-->
         <property name="mappingLocations">
             <list>
-                <value></value>
+                <value>classpath:com/bean/TbUser.hbm.xml</value>
+            </list>
+        </property>
+        <property name="annotatedClasses">
+            <list>
+                <value>com.bean.TbUser</value>
             </list>
         </property>
     </bean>
+
+    <bean class="test.TestService" id="testService">
+        <property name="name" value="spring"></property>
+    </bean>
+
+    <!--hibernate测试加入-->
+    <bean id="tbUserService" class="com.service.TbUserServiceImpl">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+
+    <!--struts2测试加入-->
+    <bean id="tbUserAction" class="com.action.TbUserAction">
+        <property name="tbUserService" ref="tbUserService"></property>
+    </bean>
+
 </beans>
